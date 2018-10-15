@@ -41,8 +41,10 @@ app.post('/upload', (request, response) => {
     request.files.pdf.mv(filePath)
         .then(() => {
             console.log("FILE MOVED");
+
             fs.readFile(filePath, (err, pdfBuffer) => {
                 if (!err) {
+                    let listingIdsArray = [];
                     let output = '';
                     pdfParser.parseBuffer(pdfBuffer);
                     pdfParser.on("pdfParser_dataReady", pdfData => {
@@ -50,11 +52,16 @@ app.post('/upload', (request, response) => {
                         for (let i = 0; i < pagesArray.length; i++) {
                             let texts = pagesArray[i].Texts;
                             for (let j = 0; j < texts.length; j++) {
-                                let myChar = texts[j].R[0].T.trim().replace(/%20/g, '').replace(/%3A/g, ':');
+                                let myChar = texts[j].R[0].T.replace(/%20/g, '').replace(/%3A/g, ':');
                                 output += myChar;
                             }
                         }
-                        console.log(output);
+                        listingIdsArray = output.match(/LSTAC.{20}SKU/g);
+
+                        for (let i = 0; i < listingIdsArray.length; i++) {
+                            listingIdsArray[i] = listingIdsArray[i].slice(0, listingIdsArray.length - 1);
+                        }
+                        console.log(listingIdsArray)
                     });
                 }
             });
