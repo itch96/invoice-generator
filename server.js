@@ -63,7 +63,7 @@ app.post('/upload', (request, response) => {
 
                         for (let i = 0; i < listingIdsArray.length; i++) {
                             listingIdsArray[i] = listingIdsArray[i].slice(0, listingIdsArray.length - 1);
-                            let quantitiesLength = quantitiesArray[i].length - (i + 2).toString().length
+                            let quantitiesLength = i == quantitiesArray.length - 1 ? quantitiesArray[i].length : quantitiesArray[i].length - (i + 2).toString().length
                             quantitiesArray[i] = quantitiesArray[i].slice(6, quantitiesLength);
                         }
                         console.log(listingIdsArray)
