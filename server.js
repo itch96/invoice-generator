@@ -45,6 +45,7 @@ app.post('/upload', (request, response) => {
             fs.readFile(filePath, (err, pdfBuffer) => {
                 if (!err) {
                     let listingIdsArray = [];
+                    let quantitiesArray = [];
                     let output = '';
                     pdfParser.parseBuffer(pdfBuffer);
                     pdfParser.on("pdfParser_dataReady", pdfData => {
@@ -57,11 +58,16 @@ app.post('/upload', (request, response) => {
                             }
                         }
                         listingIdsArray = output.match(/LSTAC.{20}SKU/g);
+                        quantitiesArray = output.match(/EBT[0-9]{3}[0-9]+/g);
+
 
                         for (let i = 0; i < listingIdsArray.length; i++) {
                             listingIdsArray[i] = listingIdsArray[i].slice(0, listingIdsArray.length - 1);
+                            let quantitiesLength = quantitiesArray[i].length - (i + 2).toString().length
+                            quantitiesArray[i] = quantitiesArray[i].slice(6, quantitiesLength);
                         }
                         console.log(listingIdsArray)
+                        console.log(quantitiesArray)
                     });
                 }
             });
